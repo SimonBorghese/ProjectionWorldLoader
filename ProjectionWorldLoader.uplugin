@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "ProjectionWorldLoader",
+	"Description": "A library for loading in UWorlds in real time",
+	"Category": "Other",
+	"CreatedBy": "Drikon/Simon Borghese",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "ProjectionWorldLoader",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
