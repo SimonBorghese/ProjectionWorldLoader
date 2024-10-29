@@ -10,9 +10,6 @@
 #include "GameFramework/GameModeBase.h"
 
 
-#include "UWorldCommonGameViewportClient.h"
-
-
 TArray<UWorld*> UUWorldSubsystem::CreatedWorlds;
 
 void UUWorldSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -42,7 +39,6 @@ void UUWorldSubsystem::Deinitialize()
 	Lambda.Reset();
 }
 
-//////void UGameBFL::CreateNewWorld3(const UObject* WorldContextObject, const TSoftObjectPtr<UWorld> Level, UWorld*& World, FUWorldContext2& UWorldContext)
 void UUWorldSubsystem::CreateNewWorld(const TSoftObjectPtr<UWorld> Level, TSubclassOf<class AGameModeBase> GameMode, FUWorldContext& UWorldContext)
 {
 
@@ -51,13 +47,14 @@ void UUWorldSubsystem::CreateNewWorld(const TSoftObjectPtr<UWorld> Level, TSubcl
 	const FString LevelName2 = FPackageName::ObjectPathToPackageName(Level.ToString());
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("level name = %s"), *LevelName2));
 
+	/*
 	UPackage* WorldPackage = FindPackage(nullptr, *LevelName2);
 	if (WorldPackage == nullptr)
 	{
 		WorldPackage = LoadPackage(nullptr, *LevelName2, ELoadFlags::LOAD_None);
 		if (!WorldPackage)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Package not loaded")));
+			UE_LOG(LogTemp, Error, TEXT("Package not found!"));
 			return;
 		}
 
@@ -131,20 +128,7 @@ void UUWorldSubsystem::CreateNewWorld(const TSoftObjectPtr<UWorld> Level, TSubcl
 	////NewWorldPackage->FileName = PackageFName;
 	////NewWorldPackage->SetGuid(EditorLevelPackage->GetGuid());
 	////NewWorldPackage->MarkAsFullyLoaded();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	
 
 	FObjectDuplicationParameters Parameters(PackageWorld, NewWorldPackage);
 	//FName Pname = *(WorldPackage->GetFName().ToString() + FGuid::NewGuid().ToString());
@@ -156,32 +140,10 @@ void UUWorldSubsystem::CreateNewWorld(const TSoftObjectPtr<UWorld> Level, TSubcl
 
 
 	//NewWorld = CastChecked<UWorld>(StaticDuplicateObjectEx(Parameters));
-	NewWorld = Cast<UWorld>(StaticDuplicateObjectEx(Parameters));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	*/
+	//NewWorld = Cast<UWorld>(StaticDuplicateObjectEx(Parameters));
+	NewWorld = Level.LoadSynchronous();
+	UWorldContext.ContextWorld = NewWorld;
 	NewWorld->SetShouldTick(true);
 
 	auto GameInstance = UGameplayStatics::GetGameInstance(GEngine->GetCurrentPlayWorld());
@@ -207,11 +169,11 @@ void UUWorldSubsystem::CreateNewWorld(const TSoftObjectPtr<UWorld> Level, TSubcl
 	NewWorld->AddToRoot();
 
 	// Clear the dirty flags set during SpawnActor and UpdateLevelComponents
-	WorldPackage->SetDirtyFlag(false);
-	for (UPackage* ExternalPackage : WorldPackage->GetExternalPackages())
-	{
-		ExternalPackage->SetDirtyFlag(false);
-	}
+	//WorldPackage->SetDirtyFlag(false);
+	//for (UPackage* ExternalPackage : WorldPackage->GetExternalPackages())
+	//{
+	//	ExternalPackage->SetDirtyFlag(false);
+	//}
 
 	// Tell the engine we are adding a world (unless we are asked not to)
 	if (GEngine)
@@ -369,7 +331,7 @@ void UUWorldSubsystem::CreateNewWorld(const TSoftObjectPtr<UWorld> Level, TSubcl
 
 	FUWorldContext ctx;
 	ctx.ContextWorld = NewWorld;
-	UWorldContext = ctx;
+	UWorldContext.ContextWorld = NewWorld;
 	//UWorldContext.SetWorldContext(&WorldContext);
 	//World = NewWorld;
 	//
@@ -507,10 +469,6 @@ APlayerController* UUWorldSubsystem::ChangeWorld(FUWorldContext UWorldContext, A
 		NewWorld->GetGameViewport()->Init(*WorldContext, GameInstance);
 	}
 	
-	auto vp = Cast<UUWorldCommonGameViewportClient>(NewWorld->GetGameViewport());
-	if (IsValid(vp)) {
-		vp->ChangeRenderWorld(NewWorld);
-	}
 	
 
 

@@ -31,7 +31,7 @@ public:
  * 
  */
 UCLASS()
-class GAMEPROJECT_API UUWorldSubsystem : public UWorldSubsystem
+class PROJECTIONWORLDLOADER_API UUWorldSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()
 public:
